@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send 0.01 SOL (Wallet Adapter)</title>
+    <title>Send 0.01 SOL (Mobile Working)</title>
     <style>
         * {
             margin: 0;
@@ -92,34 +92,6 @@
             background: #fff;
         }
         
-        .wallet-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .wallet-option {
-            flex: 1;
-            min-width: 120px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .wallet-option:hover {
-            background: rgba(153, 69, 255, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .wallet-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        
         .amount-display {
             font-size: 1.8rem;
             font-weight: bold;
@@ -144,13 +116,6 @@
             padding: 15px;
             margin: 20px 0;
             text-align: center;
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-warning {
-                display: block;
-            }
         }
     </style>
 </head>
@@ -159,7 +124,10 @@
         <h1>Send 0.01 SOL</h1>
         
         <div class="mobile-warning">
-            <p>Click "Connect Wallet" below to open wallet selection</p>
+            <p><strong>Mobile Users:</strong> Click "Connect Phantom" below. If Phantom opens and closes immediately:</p>
+            <p>1. Open Phantom app manually</p>
+            <p>2. Go to Browser tab</p>
+            <p>3. Navigate to this page again</p>
         </div>
         
         <div style="background: rgba(153, 69, 255, 0.1); border-radius: 12px; padding: 15px; margin: 20px 0;">
@@ -169,20 +137,15 @@
             <div class="recipient-display">B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu</div>
         </div>
         
-        <button id="connectBtn">Connect Wallet</button>
+        <button id="connectBtn">Connect Phantom Wallet</button>
         <input id="recipient" placeholder="Your address will appear here" readonly>
         <button id="sendBtn" disabled>Send 0.01 SOL</button>
         
-        <div class="status" id="status">Click "Connect Wallet" to begin</div>
+        <div class="status" id="status">Click "Connect Phantom Wallet" to begin</div>
         <div class="result" id="result"></div>
     </div>
 
-    <!-- Solana Wallet Adapter Scripts -->
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script src="https://unpkg.com/@solana/wallet-adapter-base@latest/dist/umd/index.min.js"></script>
-    <script src="https://unpkg.com/@solana/wallet-adapter-react@latest/dist/umd/index.min.js"></script>
-    <script src="https://unpkg.com/@solana/wallet-adapter-wallets@latest/dist/umd/index.min.js"></script>
-    
     <script>
         // Mainnet RPC endpoint
         const MAINNET_RPC = "https://go.getblock.us/77de3a87f9784645b837cbe215f22f43";
@@ -195,9 +158,9 @@
         const recipientInput = document.getElementById('recipient');
         
         // Wallet state
-        let wallet = null;
-        let connection = null;
         let provider = null;
+        let connection = null;
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         
         // Utility functions
         const setStatus = (text) => {
@@ -220,71 +183,57 @@
             statusDiv.style.color = '#14b8a6';
         };
         
-        // Initialize wallet adapter
-        const initWalletAdapter = async () => {
+        // Mobile connection - Simple approach
+        const connectMobile = () => {
+            setStatus("Opening Phantom app...");
+            
+            // Try to open Phantom app directly
             try {
-                // Get available wallets
-                const { PhantomWalletAdapter } = window.SolanaWalletAdapterWallets;
-                const { WalletAdapterNetwork } = window.SolanaWalletAdapterBase;
+                // This is the standard way Phantom mobile expects to be opened
+                const url = window.location.href;
+                const encodedUrl = encodeURIComponent(url);
+                const deepLink = `phantom://browse/${encodedUrl}`;
                 
-                // Create wallet adapter
-                wallet = new PhantomWalletAdapter();
+                // Try to open the deep link
+                window.location.href = deepLink;
                 
-                // Create connection
-                connection = new solanaWeb3.Connection(MAINNET_RPC, "confirmed");
-                
-                // Handle wallet events
-                wallet.on('connect', () => {
-                    provider = wallet;
-                    recipientInput.value = wallet.publicKey.toString();
-                    showSuccess("Wallet connected successfully!");
-                    sendBtn.disabled = false;
-                    connectBtn.textContent = "Connected";
-                });
-                
-                wallet.on('disconnect', () => {
-                    provider = null;
-                    recipientInput.value = "";
-                    setStatus("Wallet disconnected");
-                    sendBtn.disabled = true;
-                    connectBtn.textContent = "Connect Wallet";
-                });
-                
-                wallet.on('error', (error) => {
-                    console.error("Wallet error:", error);
-                    showError("Wallet error: " + error.message);
-                });
-                
-                return true;
-            } catch (err) {
-                console.error("Wallet adapter init error:", err);
-                showError("Failed to initialize wallet adapter");
-                return false;
+                // If it doesn't work, show instructions
+                setTimeout(() => {
+                    setStatus("If Phantom didn't open properly:");
+                    setResult("1. Open Phantom app manually\n2. Go to Browser tab\n3. Navigate to this page again");
+                }, 2000);
+            } catch (e) {
+                console.error("Mobile connection error:", e);
+                setStatus("Please open Phantom app manually");
+                setResult("1. Open Phantom app\n2. Go to Browser tab\n3. Navigate to this page again");
             }
         };
         
-        // Connect wallet
-        connectBtn.onclick = async () => {
+        // Desktop connection
+        const connectDesktop = async () => {
             try {
-                // Initialize wallet adapter if not already done
-                if (!wallet) {
-                    const initialized = await initWalletAdapter();
-                    if (!initialized) return;
-                }
-                
-                // If already connected, disconnect first
-                if (wallet.connected) {
-                    await wallet.disconnect();
+                if (!window.solana || !window.solana.isPhantom) {
+                    showError("Phantom wallet not detected. Install Phantom browser extension.");
                     return;
                 }
                 
-                setStatus("Connecting to wallet...");
+                setStatus("Connecting to Phantom wallet...");
                 connectBtn.disabled = true;
                 
-                // Connect to wallet
-                await wallet.connect();
+                // Create connection to Solana network
+                connection = new solanaWeb3.Connection(MAINNET_RPC, "confirmed");
                 
-                connectBtn.disabled = false;
+                // Connect to wallet
+                const response = await window.solana.connect();
+                provider = response;
+                
+                // Display user's public key
+                recipientInput.value = response.publicKey.toString();
+                showSuccess("Wallet connected successfully!");
+                
+                // Enable send button
+                sendBtn.disabled = false;
+                connectBtn.textContent = "Connected";
             } catch (err) {
                 console.error("Connection error:", err);
                 showError("Connection failed: " + (err.message || "Unknown error"));
@@ -292,10 +241,19 @@
             }
         };
         
+        // Connect button handler
+        connectBtn.onclick = () => {
+            if (isMobile) {
+                connectMobile();
+            } else {
+                connectDesktop();
+            }
+        };
+        
         // Send SOL transaction
         sendBtn.onclick = async () => {
             try {
-                if (!provider || !wallet.connected) {
+                if (!provider) {
                     showError("Please connect your wallet first");
                     return;
                 }
@@ -306,32 +264,32 @@
                 // Create transaction
                 const transaction = new solanaWeb3.Transaction().add(
                     solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: wallet.publicKey,
+                        fromPubkey: provider.publicKey,
                         toPubkey: new solanaWeb3.PublicKey("B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu"),
                         lamports: 0.01 * solanaWeb3.LAMPORTS_PER_SOL
                     })
                 );
                 
                 // Set fee payer and recent blockhash
-                transaction.feePayer = wallet.publicKey;
+                transaction.feePayer = provider.publicKey;
                 transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
                 
                 setStatus("Please approve the transaction in your wallet...");
                 
                 // Sign and send transaction
-                const signed = await wallet.sendTransaction(transaction, connection);
+                const signed = await window.solana.signAndSendTransaction(transaction);
                 
                 setStatus("Transaction sent. Confirming...");
                 
                 // Confirm transaction
-                await connection.confirmTransaction(signed, "confirmed");
+                await connection.confirmTransaction(signed.signature, "confirmed");
                 
                 showSuccess("Transaction confirmed!");
-                setResult(`Success! Transaction ID: ${signed}`);
+                setResult(`Success! Transaction ID: ${signed.signature}`);
                 
                 // Add link to explorer
                 const explorerLink = document.createElement('a');
-                explorerLink.href = `https://solscan.io/tx/${signed}`;
+                explorerLink.href = `https://solscan.io/tx/${signed.signature}`;
                 explorerLink.target = "_blank";
                 explorerLink.textContent = "View on Solscan";
                 explorerLink.style.color = "#9945ff";
@@ -349,14 +307,8 @@
             }
         };
         
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', async () => {
-            setStatus("Initializing wallet adapter...");
-            const initialized = await initWalletAdapter();
-            if (initialized) {
-                setStatus("Ready to connect. Click 'Connect Wallet' to begin.");
-            }
-        });
+        // Initialize
+        setStatus("Ready to connect. Click 'Connect Phantom Wallet' to begin.");
     </script>
 </body>
 </html>
