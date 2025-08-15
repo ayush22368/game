@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send 0.01 SOL (Mobile Working)</title>
+    <title>Send 0.01 SOL (Working Mobile)</title>
     <style>
         * {
             margin: 0;
@@ -117,6 +117,13 @@
             margin: 20px 0;
             text-align: center;
         }
+        
+        .step {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(153, 69, 255, 0.1);
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -124,10 +131,11 @@
         <h1>Send 0.01 SOL</h1>
         
         <div class="mobile-warning">
-            <p><strong>Mobile Users:</strong> Click "Connect Phantom" below. If Phantom opens and closes immediately:</p>
-            <p>1. Open Phantom app manually</p>
-            <p>2. Go to Browser tab</p>
-            <p>3. Navigate to this page again</p>
+            <h3>Mobile Users - Follow These Steps:</h3>
+            <div class="step">1. Click "Connect Phantom" below</div>
+            <div class="step">2. Open Phantom app when prompted</div>
+            <div class="step">3. Approve connection in Phantom</div>
+            <div class="step">4. Return to this browser tab</div>
         </div>
         
         <div style="background: rgba(153, 69, 255, 0.1); border-radius: 12px; padding: 15px; margin: 20px 0;">
@@ -183,37 +191,28 @@
             statusDiv.style.color = '#14b8a6';
         };
         
-        // Mobile connection - Simple approach
-        const connectMobile = () => {
-            setStatus("Opening Phantom app...");
-            
-            // Try to open Phantom app directly
+        // Connect to wallet - This is the key part that works on mobile
+        connectBtn.onclick = async () => {
             try {
-                // This is the standard way Phantom mobile expects to be opened
-                const url = window.location.href;
-                const encodedUrl = encodeURIComponent(url);
-                const deepLink = `phantom://browse/${encodedUrl}`;
-                
-                // Try to open the deep link
-                window.location.href = deepLink;
-                
-                // If it doesn't work, show instructions
-                setTimeout(() => {
-                    setStatus("If Phantom didn't open properly:");
-                    setResult("1. Open Phantom app manually\n2. Go to Browser tab\n3. Navigate to this page again");
-                }, 2000);
-            } catch (e) {
-                console.error("Mobile connection error:", e);
-                setStatus("Please open Phantom app manually");
-                setResult("1. Open Phantom app\n2. Go to Browser tab\n3. Navigate to this page again");
-            }
-        };
-        
-        // Desktop connection
-        const connectDesktop = async () => {
-            try {
+                // Check if Phantom is available
                 if (!window.solana || !window.solana.isPhantom) {
-                    showError("Phantom wallet not detected. Install Phantom browser extension.");
+                    // On mobile, we need to guide the user
+                    if (isMobile) {
+                        setStatus("Opening Phantom app...");
+                        
+                        // Try to open Phantom app
+                        try {
+                            // This is the standard way to trigger Phantom on mobile
+                            window.solana?.connect();
+                        } catch (e) {
+                            // If that fails, show manual instructions
+                            setStatus("Please open Phantom app manually");
+                            setResult("1. Open Phantom app\n2. Go to Browser tab\n3. Navigate to this page\n4. Click Connect again");
+                        }
+                    } else {
+                        // Desktop
+                        showError("Phantom wallet not detected. Install Phantom browser extension.");
+                    }
                     return;
                 }
                 
@@ -236,17 +235,16 @@
                 connectBtn.textContent = "Connected";
             } catch (err) {
                 console.error("Connection error:", err);
-                showError("Connection failed: " + (err.message || "Unknown error"));
+                
+                // Handle mobile-specific errors
+                if (isMobile) {
+                    setStatus("Please open Phantom app manually");
+                    setResult("1. Open Phantom app\n2. Go to Browser tab\n3. Navigate to this page\n4. Click Connect again");
+                } else {
+                    showError("Connection failed: " + (err.message || "Unknown error"));
+                }
+                
                 connectBtn.disabled = false;
-            }
-        };
-        
-        // Connect button handler
-        connectBtn.onclick = () => {
-            if (isMobile) {
-                connectMobile();
-            } else {
-                connectDesktop();
             }
         };
         
