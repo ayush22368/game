@@ -1,47 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connect Phantom (Mobile Deep-Link)</title>
-  <style>
-    html,body{margin:0;height:100%;background:#0e0e0e;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}
-    #connectBtn{background:#9945ff;color:#fff;border:none;padding:14px 28px;font-size:1.1rem;border-radius:8px;cursor:pointer}
-    #address{margin-top:20px;font-size:1rem;color:#00ffa3;word-break:break-all}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send 0.01 SOL (Mobile Compatible)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #9945ff;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #9945ff, #14b8a6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #9945ff 0%, #14b8a6 100%);
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(153, 69, 255, 0.5);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .status, .result {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: #ccc;
+            word-break: break-word;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #000;
+            background: #fff;
+        }
+        
+        .info-box {
+            background: rgba(153, 69, 255, 0.1);
+            border: 1px solid rgba(153, 69, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        
+        .info-box h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #9945ff;
+        }
+        
+        .info-box ul {
+            padding-left: 20px;
+        }
+        
+        .info-box li {
+            margin-bottom: 8px;
+        }
+        
+        .mobile-warning {
+            display: none;
+            background: rgba(255, 165, 0, 0.15);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .mobile-warning i {
+            font-size: 2rem;
+            color: #ffa500;
+            margin-bottom: 10px;
+        }
+        
+        .transaction-details {
+            background: rgba(20, 184, 166, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .transaction-details h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #14b8a6;
+        }
+        
+        .amount-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            color: #9945ff;
+        }
+        
+        .recipient-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 18px;
+                font-size: 1.1rem;
+            }
+            
+            .mobile-warning {
+                display: block;
+            }
+        }
+        
+        /* Animation for mobile */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Solana-themed background elements */
+        .solana-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .solana-bg div {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(153, 69, 255, 0.1) 0%, transparent 70%);
+        }
+        
+        .bg-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .bg-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        .bg-3 {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            left: 10%;
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <button id="connectBtn">Connect Wallet</button>
-    <div id="address"></div>
-  </div>
+    <div class="solana-bg">
+        <div class="bg-1"></div>
+        <div class="bg-2"></div>
+        <div class="bg-3"></div>
+    </div>
+    
+    <div class="container">
+        <h1><span class="logo">S</span> Send 0.01 SOL</h1>
+        
+        <div class="mobile-warning">
+            <i class="fas fa-mobile-alt"></i>
+            <p>For mobile users: Ensure Phantom Wallet app is installed and browser is set to open dApps in the app.</p>
+        </div>
+        
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> How to use</h3>
+            <ul>
+                <li>Connect your Phantom wallet using the button below</li>
+                <li>Review the transaction details</li>
+                <li>Approve the transaction in your wallet</li>
+                <li>Wait for confirmation on the Solana network</li>
+            </ul>
+        </div>
+        
+        <div class="transaction-details">
+            <h3><i class="fas fa-exchange-alt"></i> Transaction Details</h3>
+            <p>Amount to send:</p>
+            <div class="amount-display">0.01 SOL</div>
+            <p>To recipient:</p>
+            <div class="recipient-display" id="recipientDisplay">B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu</div>
+        </div>
+        
+        <button id="connectBtn">
+            <i class="fas fa-wallet"></i> Connect Phantom Wallet
+        </button>
+        
+        <input id="recipient" placeholder="Your address will appear here" readonly>
+        
+        <button id="sendBtn" disabled>
+            <i class="fas fa-paper-plane"></i> Send 0.01 SOL
+        </button>
+        
+        <div class="status" id="status">Click "Connect" to get started</div>
+        <div class="result" id="result"></div>
+        
+        <div class="footer">
+            <p>Secure Solana transactions • Mainnet Beta</p>
+        </div>
+    </div>
 
-  <script type="module">
-    import { transact } from 'https://unpkg.com/@solana-mobile/mobile-wallet-adapter-protocol-web3js@2.0.0/dist/index.browser.esm.js';
-
-    const btn   = document.getElementById('connectBtn');
-    const addr  = document.getElementById('address');
-
-    btn.addEventListener('click', async () => {
-      try {
-        const result = await transact(async wallet => {
-          const { accounts } = await wallet.authorize({ cluster: 'mainnet-beta' });
-          return accounts[0].address;
-        });
-        addr.textContent = `Connected: ${result}`;
-      } catch (e) {
-        console.error(e);
-        addr.textContent = e.message || 'Connection cancelled / failed';
-      }
-    });
-
-    // Optional: auto-restore
-    try {
-      const result = await transact(async wallet => {
-        const { accounts } = await wallet.authorize({ cluster: 'mainnet-beta', identity: { name: 'My dApp' }, auth_token: null });
-        if (accounts.length) addr.textContent = `Connected: ${accounts[0].address}`;
-      });
-    } catch {}
-  </script>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script>
+        // Mainnet RPC endpoint
+        const MAINNET_RPC = "https://go.getblock.us/77de3a87f9784645b837cbe215f22f43";
+        
+        // DOM elements
+        const connectBtn = document.getElementById('connectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+        const recipientInput = document.getElementById('recipient');
+        const recipientDisplay = document.getElementById('recipientDisplay');
+        
+        // Wallet state
+        let provider = null;
+        let connection = null;
+        
+        // Utility functions
+        const setStatus = (text) => {
+            statusDiv.textContent = text;
+            statusDiv.style.color = '#ccc';
+        };
+        
+        const setResult = (text) => {
+            resultDiv.textContent = text;
+            resultDiv.style.color = '#ccc';
+        };
+        
+        const showError = (text) => {
+            statusDiv.textContent = text;
+            statusDiv.style.color = '#ff6b6b';
+        };
+        
+        const showSuccess = (text) => {
+            statusDiv.textContent = text;
+            statusDiv.style.color = '#14b8a6';
+        };
+        
+        // Check if Phantom is available
+        const checkPhantom = () => {
+            return window.solana && window.solana.isPhantom;
+        };
+        
+        // Connect to Phantom wallet
+        connectBtn.onclick = async () => {
+            try {
+                if (!checkPhantom()) {
+                    showError("Phantom wallet not detected. Install Phantom browser extension or app.");
+                    return;
+                }
+                
+                setStatus("Connecting to Phantom wallet...");
+                connectBtn.disabled = true;
+                
+                // Create connection to Solana network
+                connection = new solanaWeb3.Connection(MAINNET_RPC, "confirmed");
+                
+                // Connect to wallet
+                const response = await window.solana.connect();
+                provider = response;
+                
+                // Display user's public key
+                recipientInput.value = response.publicKey.toString();
+                showSuccess("Wallet connected successfully!");
+                
+                // Enable send button
+                sendBtn.disabled = false;
+                connectBtn.innerHTML = '<i class="fas fa-check"></i> Connected';
+                connectBtn.classList.add('pulse');
+            } catch (err) {
+                console.error("Connection error:", err);
+                showError("Connection failed: " + (err.message || "Unknown error"));
+                connectBtn.disabled = false;
+            }
+        };
+        
+        // Send SOL transaction
+        sendBtn.onclick = async () => {
+            try {
+                if (!provider) {
+                    showError("Please connect your wallet first");
+                    return;
+                }
+                
+                sendBtn.disabled = true;
+                setStatus("Preparing transaction...");
+                
+                // Create transaction
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: provider.publicKey,
+                        toPubkey: new solanaWeb3.PublicKey("B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu"),
+                        lamports: 0.01 * solanaWeb3.LAMPORTS_PER_SOL
+                    })
+                );
+                
+                // Set fee payer and recent blockhash
+                transaction.feePayer = provider.publicKey;
+                transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+                
+                setStatus("Please approve the transaction in your wallet...");
+                
+                // Sign and send transaction
+                const signed = await window.solana.signAndSendTransaction(transaction);
+                
+                setStatus("Transaction sent. Confirming...");
+                
+                // Confirm transaction
+                await connection.confirmTransaction(signed.signature, "confirmed");
+                
+                showSuccess("Transaction confirmed!");
+                setResult(`Success! Transaction ID: ${signed.signature}`);
+                
+                // Add link to explorer
+                const explorerLink = document.createElement('a');
+                explorerLink.href = `https://solscan.io/tx/${signed.signature}`;
+                explorerLink.target = "_blank";
+                explorerLink.textContent = "View on Solscan";
+                explorerLink.style.color = "#9945ff";
+                explorerLink.style.display = "block";
+                explorerLink.style.marginTop = "10px";
+                explorerLink.style.textDecoration = "none";
+                
+                resultDiv.appendChild(explorerLink);
+            } catch (err) {
+                console.error("Transaction error:", err);
+                showError("Transaction failed: " + (err.message || "Unknown error"));
+                setResult("");
+            } finally {
+                sendBtn.disabled = false;
+            }
+        };
+        
+        // Check for mobile and show appropriate instructions
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            document.querySelector('.mobile-warning').style.display = 'block';
+        }
+        
+        // Initialize
+        setStatus("Ready to connect. Click 'Connect Phantom Wallet' to begin.");
+    </script>
 </body>
 </html>
