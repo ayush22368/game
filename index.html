@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send 0.01 SOL (Mobile Compatible)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -21,8 +20,6 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
         }
         
         .container {
@@ -34,8 +31,6 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 2;
         }
         
         h1 {
@@ -43,21 +38,6 @@
             margin-bottom: 20px;
             color: #9945ff;
             font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #9945ff, #14b8a6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
         }
         
         button {
@@ -72,10 +52,6 @@
             transition: all 0.3s;
             margin-bottom: 15px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         
         button:hover {
@@ -116,60 +92,21 @@
             background: #fff;
         }
         
-        .info-box {
-            background: rgba(153, 69, 255, 0.1);
-            border: 1px solid rgba(153, 69, 255, 0.3);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            font-size: 0.9rem;
-        }
-        
-        .info-box h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            color: #9945ff;
-        }
-        
-        .info-box ul {
-            padding-left: 20px;
-        }
-        
-        .info-box li {
-            margin-bottom: 8px;
-        }
-        
-        .mobile-warning {
-            display: none;
+        .mobile-instructions {
             background: rgba(255, 165, 0, 0.15);
             border: 1px solid rgba(255, 165, 0, 0.3);
             border-radius: 12px;
             padding: 15px;
             margin: 20px 0;
             text-align: center;
+            display: none;
         }
         
-        .mobile-warning i {
-            font-size: 2rem;
-            color: #ffa500;
-            margin-bottom: 10px;
-        }
-        
-        .transaction-details {
+        .desktop-instructions {
             background: rgba(20, 184, 166, 0.1);
             border-radius: 12px;
             padding: 15px;
             margin: 20px 0;
-        }
-        
-        .transaction-details h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: #14b8a6;
         }
         
         .amount-display {
@@ -189,132 +126,49 @@
             margin: 10px 0;
         }
         
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-        
-        /* Mobile-specific styles */
         @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            button {
-                padding: 18px;
-                font-size: 1.1rem;
-            }
-            
-            .mobile-warning {
+            .mobile-instructions {
                 display: block;
             }
-        }
-        
-        /* Animation for mobile */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        /* Solana-themed background elements */
-        .solana-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        .solana-bg div {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(153, 69, 255, 0.1) 0%, transparent 70%);
-        }
-        
-        .bg-1 {
-            width: 300px;
-            height: 300px;
-            top: -100px;
-            right: -100px;
-        }
-        
-        .bg-2 {
-            width: 200px;
-            height: 200px;
-            bottom: -50px;
-            left: -50px;
-        }
-        
-        .bg-3 {
-            width: 150px;
-            height: 150px;
-            top: 30%;
-            left: 10%;
+            
+            .desktop-instructions {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="solana-bg">
-        <div class="bg-1"></div>
-        <div class="bg-2"></div>
-        <div class="bg-3"></div>
-    </div>
-    
     <div class="container">
-        <h1><span class="logo">S</span> Send 0.01 SOL</h1>
+        <h1>Send 0.01 SOL</h1>
         
-        <div class="mobile-warning">
-            <i class="fas fa-mobile-alt"></i>
-            <p>For mobile users: Ensure Phantom Wallet app is installed and browser is set to open dApps in the app.</p>
+        <div class="mobile-instructions">
+            <h3>Mobile Instructions</h3>
+            <p>1. Click "Connect Phantom" below</p>
+            <p>2. You'll be redirected to the Phantom app</p>
+            <p>3. Approve the connection in Phantom</p>
+            <p>4. You'll be sent back to this page</p>
         </div>
         
-        <div class="info-box">
-            <h3><i class="fas fa-info-circle"></i> How to use</h3>
-            <ul>
-                <li>Connect your Phantom wallet using the button below</li>
-                <li>Review the transaction details</li>
-                <li>Approve the transaction in your wallet</li>
-                <li>Wait for confirmation on the Solana network</li>
-            </ul>
+        <div class="desktop-instructions">
+            <h3>Desktop Instructions</h3>
+            <p>1. Make sure Phantom extension is installed</p>
+            <p>2. Click "Connect Phantom" below</p>
+            <p>3. Approve the connection in Phantom</p>
         </div>
         
-        <div class="transaction-details">
-            <h3><i class="fas fa-exchange-alt"></i> Transaction Details</h3>
+        <div style="background: rgba(153, 69, 255, 0.1); border-radius: 12px; padding: 15px; margin: 20px 0;">
             <p>Amount to send:</p>
             <div class="amount-display">0.01 SOL</div>
             <p>To recipient:</p>
-            <div class="recipient-display" id="recipientDisplay">B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu</div>
+            <div class="recipient-display">B9uzQXpQuWHkmwkRjhRmizoLBYMgLZJUvWCYMcH6kGvu</div>
         </div>
         
-        <button id="connectBtn">
-            <i class="fas fa-wallet"></i> Connect Phantom Wallet
-        </button>
-        
+        <button id="connectBtn">Connect Phantom Wallet</button>
         <input id="recipient" placeholder="Your address will appear here" readonly>
-        
-        <button id="sendBtn" disabled>
-            <i class="fas fa-paper-plane"></i> Send 0.01 SOL
-        </button>
+        <button id="sendBtn" disabled>Send 0.01 SOL</button>
         
         <div class="status" id="status">Click "Connect" to get started</div>
         <div class="result" id="result"></div>
-        
-        <div class="footer">
-            <p>Secure Solana transactions • Mainnet Beta</p>
-        </div>
     </div>
 
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
@@ -328,11 +182,11 @@
         const statusDiv = document.getElementById('status');
         const resultDiv = document.getElementById('result');
         const recipientInput = document.getElementById('recipient');
-        const recipientDisplay = document.getElementById('recipientDisplay');
         
         // Wallet state
         let provider = null;
         let connection = null;
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         
         // Utility functions
         const setStatus = (text) => {
@@ -355,16 +209,26 @@
             statusDiv.style.color = '#14b8a6';
         };
         
-        // Check if Phantom is available
-        const checkPhantom = () => {
-            return window.solana && window.solana.isPhantom;
+        // Mobile connection handler
+        const connectMobile = () => {
+            setStatus("Redirecting to Phantom app...");
+            
+            // Get the current page URL
+            const currentUrl = encodeURIComponent(window.location.href);
+            
+            // Create the Phantom deep link
+            // This will open the Phantom app and ask for connection
+            const deepLink = `https://phantom.app/ul/v1/connect?app_url=${currentUrl}&redirect_link=${currentUrl}`;
+            
+            // Redirect to Phantom
+            window.location.href = deepLink;
         };
         
-        // Connect to Phantom wallet
-        connectBtn.onclick = async () => {
+        // Desktop connection handler
+        const connectDesktop = async () => {
             try {
-                if (!checkPhantom()) {
-                    showError("Phantom wallet not detected. Install Phantom browser extension or app.");
+                if (!window.solana || !window.solana.isPhantom) {
+                    showError("Phantom wallet not detected. Install Phantom browser extension.");
                     return;
                 }
                 
@@ -384,12 +248,20 @@
                 
                 // Enable send button
                 sendBtn.disabled = false;
-                connectBtn.innerHTML = '<i class="fas fa-check"></i> Connected';
-                connectBtn.classList.add('pulse');
+                connectBtn.textContent = "Connected";
             } catch (err) {
                 console.error("Connection error:", err);
                 showError("Connection failed: " + (err.message || "Unknown error"));
                 connectBtn.disabled = false;
+            }
+        };
+        
+        // Connect button handler
+        connectBtn.onclick = () => {
+            if (isMobile) {
+                connectMobile();
+            } else {
+                connectDesktop();
             }
         };
         
@@ -449,12 +321,6 @@
                 sendBtn.disabled = false;
             }
         };
-        
-        // Check for mobile and show appropriate instructions
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-            document.querySelector('.mobile-warning').style.display = 'block';
-        }
         
         // Initialize
         setStatus("Ready to connect. Click 'Connect Phantom Wallet' to begin.");
